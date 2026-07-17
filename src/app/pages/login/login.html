@@ -1,0 +1,32 @@
+<div class="login-container">
+  <h2>Login to HomeServe Connect</h2>
+
+  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+    <label for="phone">Phone Number</label>
+    <input
+      id="phone"
+      type="tel"
+      name="phone"
+      [(ngModel)]="phone"
+      required
+      placeholder="Enter your phone number"
+    />
+
+    <label for="password">Password</label>
+    <input
+      id="password"
+      type="password"
+      name="password"
+      [(ngModel)]="password"
+      required
+      placeholder="Enter your password"
+    />
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button type="submit" [disabled]="!loginForm.valid || loading">
+      {{ loading ? 'Logging in...' : 'Login' }}
+    </button>
+    <a routerLink="/register" class="link">Create a new account</a>
+  </form>
+</div>

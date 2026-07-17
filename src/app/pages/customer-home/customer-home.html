@@ -1,0 +1,76 @@
+<div class="page">
+  <div class="topbar">
+    <h1>Customer Home</h1>
+    <button (click)="logout()">Logout</button>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Book a Service</h2>
+
+      <div class="form">
+        <label for="category">Category</label>
+        <select id="category" [(ngModel)]="category" name="category">
+          <option value="ELECTRICAL">Electrical</option>
+          <option value="PLUMBING">Plumbing</option>
+          <option value="CARPENTER">Carpenter</option>
+        </select>
+
+        <label for="serviceType">Service Type</label>
+        <select id="serviceType" [(ngModel)]="serviceType" name="serviceType">
+          <option value="INSTALLATION">Installation</option>
+          <option value="SERVICE">Service</option>
+          <option value="ELECTRICIAN_ASSISTANCE">Electrician Assistance</option>
+        </select>
+
+        <label for="applianceType">Appliance Type</label>
+        <input id="applianceType" [(ngModel)]="applianceType" name="applianceType" placeholder="Washing Machine" />
+
+        <label for="brand">Brand</label>
+        <input id="brand" [(ngModel)]="brand" name="brand" placeholder="LG" />
+
+        <label for="model">Model</label>
+        <input id="model" [(ngModel)]="model" name="model" placeholder="WM123" />
+
+        <label for="longitude">Longitude</label>
+        <input id="longitude" type="number" [(ngModel)]="longitude" name="longitude" />
+
+        <label for="latitude">Latitude</label>
+        <input id="latitude" type="number" [(ngModel)]="latitude" name="latitude" />
+
+        <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+        <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+        <button class="primary" (click)="createBooking()" [disabled]="loading">
+          {{ loading ? 'Creating Booking...' : 'Create Booking' }}
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>My Bookings</h2>
+        <button class="secondary" (click)="loadBookings()">Refresh</button>
+      </div>
+
+      <p *ngIf="loadingBookings">Loading bookings...</p>
+      <p *ngIf="!loadingBookings && bookings.length === 0">No bookings yet.</p>
+
+      <div class="booking-list" *ngIf="bookings.length > 0">
+        <div class="booking-item" *ngFor="let booking of bookings">
+          <div class="row">
+            <strong>{{ booking.category }}</strong>
+            <span class="badge" [ngClass]="booking.status.toLowerCase()">
+  {{ booking.status }}
+</span>
+          </div>
+          <p><strong>Service:</strong> {{ booking.serviceType }}</p>
+          <p><strong>Appliance:</strong> {{ booking.applianceType || '-' }}</p>
+          <p><strong>Brand:</strong> {{ booking.brand || '-' }}</p>
+          <p><strong>Model:</strong> {{ booking.model || '-' }}</p>
+          <p><strong>Created:</strong> {{ booking.createdAt | date:'medium' }}</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

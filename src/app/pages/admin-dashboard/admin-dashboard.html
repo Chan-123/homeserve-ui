@@ -1,0 +1,27 @@
+<div class="page">
+  <div class="topbar">
+    <h1>Admin Dashboard</h1>
+    <button (click)="logout()">Logout</button>
+  </div>
+
+  <h2>Pending Engineer Approvals</h2>
+
+  <p *ngIf="loading">Loading pending engineers...</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p *ngIf="!loading && !errorMessage && engineers.length === 0">No pending engineers found.</p>
+
+  <div class="engineer-list" *ngIf="engineers.length > 0">
+    <div class="engineer-card" *ngFor="let engineer of engineers">
+      <h3>{{ engineer.name }}</h3>
+      <p><strong>Phone:</strong> {{ engineer.phone }}</p>
+      <p><strong>Email:</strong> {{ engineer.email || '-' }}</p>
+      <p><strong>Area:</strong> {{ engineer.area || '-' }}</p>
+      <p><strong>Status:</strong> {{ engineer.approvalStatus }}</p>
+
+      <div class="actions">
+        <button class="approve" (click)="updateApproval(engineer._id, 'APPROVED')">Approve</button>
+        <button class="reject" (click)="updateApproval(engineer._id, 'REJECTED')">Reject</button>
+      </div>
+    </div>
+  </div>
+</div>

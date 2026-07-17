@@ -1,0 +1,73 @@
+<div class="page">
+  <div class="topbar">
+    <h1>Engineer Dashboard</h1>
+    <button (click)="logout()">Logout</button>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Incoming Requests</h2>
+
+      <p *ngIf="incomingRequests.length === 0">No live incoming requests right now.</p>
+
+      <div class="booking-item" *ngFor="let request of incomingRequests">
+        <div class="row">
+          <strong>{{ request.category }}</strong>
+          <span class="badge">{{ request.status }}</span>
+        </div>
+        <p><strong>Service:</strong> {{ request.serviceType }}</p>
+        <p><strong>Appliance:</strong> {{ request.applianceType || '-' }}</p>
+        <p><strong>Brand:</strong> {{ request.brand || '-' }}</p>
+        <p><strong>Model:</strong> {{ request.model || '-' }}</p>
+
+        <div class="actions">
+          <button class="approve" (click)="respondToBooking(request.bookingId, 'ACCEPT')">Accept</button>
+          <button class="reject" (click)="respondToBooking(request.bookingId, 'REJECT')">Reject</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>My Assigned Bookings</h2>
+        <button class="secondary" (click)="loadBookings()">Refresh</button>
+      </div>
+
+      <p *ngIf="loading">Loading bookings...</p>
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p *ngIf="!loading && bookings.length === 0">No assigned bookings yet.</p>
+
+      <div class="booking-list" *ngIf="bookings.length > 0">
+        <div class="booking-item" *ngFor="let booking of bookings">
+          <div class="row">
+            <strong>{{ booking.category }}</strong>
+            <span class="badge">{{ booking.status }}</span>
+          </div>
+          <p><strong>Service:</strong> {{ booking.serviceType }}</p>
+          <p><strong>Appliance:</strong> {{ booking.applianceType || '-' }}</p>
+          <p><strong>Brand:</strong> {{ booking.brand || '-' }}</p>
+          <p><strong>Model:</strong> {{ booking.model || '-' }}</p>
+          <p><strong>Created:</strong> {{ booking.createdAt | date:'medium' }}</p>
+
+          <div class="actions" *ngIf="booking.status === 'ACCEPTED'">
+            <button class="approve" (click)="updateStatus(booking._id, 'ENGINEER_ENROUTE')">
+              Mark En Route
+            </button>
+          </div>
+
+          <div class="actions" *ngIf="booking.status === 'ENGINEER_ENROUTE'">
+            <button class="approve" (click)="updateStatus(booking._id, 'ARRIVED')">
+              Mark Arrived
+            </button>
+          </div>
+
+          <div class="actions" *ngIf="booking.status === 'ARRIVED'">
+            <button class="approve" (click)="updateStatus(booking._id, 'COMPLETED')">
+              Mark Completed
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

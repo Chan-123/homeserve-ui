@@ -1,0 +1,35 @@
+<div class="register-container">
+  <h2>Create HomeServe Account</h2>
+
+  <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+    <label for="name">Name</label>
+    <input id="name" name="name" [(ngModel)]="name" required placeholder="Enter your full name" />
+
+    <label for="phone">Phone Number</label>
+    <input id="phone" name="phone" [(ngModel)]="phone" required placeholder="Enter your phone number" />
+
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" [(ngModel)]="email" placeholder="Enter your email" />
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" [(ngModel)]="password" required placeholder="Enter your password" />
+
+    <label for="roles">Register As</label>
+    <select id="roles" name="roles" [(ngModel)]="roles">
+      <option value="CUSTOMER">Customer</option>
+      <option value="ENGINEER">Engineer</option>
+    </select>
+
+    <label for="area">Area</label>
+    <input id="area" name="area" [(ngModel)]="area" placeholder="Enter your area" />
+
+    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button type="submit" [disabled]="!registerForm.valid || loading">
+      {{ loading ? 'Creating account...' : 'Register' }}
+    </button>
+
+    <a routerLink="/login" class="link">Already have an account? Login</a>
+  </form>
+</div>
