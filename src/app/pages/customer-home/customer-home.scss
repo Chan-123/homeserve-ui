@@ -180,3 +180,48 @@ select {
   color: #2e5c10;
   font-weight: 600;
 }
+
+.draft-banner {
+  margin: 12px 0 18px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #eef8f8;
+  border: 1px solid rgba(1, 105, 111, 0.14);
+}
+
+.draft-banner p {
+  margin: 0;
+}
+
+.draft-subtext {
+  margin-top: 6px !important;
+  color: #6b6b6b;
+  font-size: 14px;
+}
+
+.confirm-box {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 10px;
+  background: #f8f8f6;
+  border: 1px solid #e3e3df;
+}
+
+.confirm-box p {
+  margin-bottom: 12px;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.secondary {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #e6f3f3;
+  color: #01696f;
+}

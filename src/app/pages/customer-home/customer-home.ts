@@ -30,6 +30,9 @@ export class CustomerHome implements OnInit {
   locationSearch = '';
   incomingDraft: any = null;
   incomingSelectedService: any = null;
+  selectedServiceTitle = '';
+  showDraftBanner = false;
+  showConfirmBooking = false;
 
   ratingMap: { [bookingId: string]: number } = {};
   reviewTextMap: { [bookingId: string]: string } = {};
@@ -50,6 +53,13 @@ export class CustomerHome implements OnInit {
 
     if (this.incomingDraft) {
       this.applyIncomingDraft();
+      this.showDraftBanner = true;
+      this.showConfirmBooking = true;
+      this.selectedServiceTitle = this.incomingSelectedService?.title || this.incomingDraft?.category || '';
+
+      setTimeout(() => {
+        this.scrollToBookingCard();
+      }, 200);
     }
 
     this.socketService.connect();
@@ -85,6 +95,25 @@ export class CustomerHome implements OnInit {
     this.longitude = draft.longitude ? Number(draft.longitude) : this.longitude;
   }
 
+    scrollToBookingCard() {
+    const el = document.getElementById('booking-card');
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+    confirmDraftBooking() {
+    this.showConfirmBooking = false;
+    this.showDraftBanner = false;
+    this.createBooking();
+  }
+
+    dismissDraft() {
+    this.showConfirmBooking = false;
+    this.showDraftBanner = false;
+    this.incomingDraft = null;
+    this.incomingSelectedService = null;
+    this.selectedServiceTitle = '';
+  }
+
   createBooking() {
     this.loading = true;
     this.successMessage = '';
@@ -108,6 +137,9 @@ export class CustomerHome implements OnInit {
         this.applianceType = '';
         this.brand = '';
         this.model = '';
+        this.selectedServiceTitle = '';
+        this.showConfirmBooking = false;
+        this.showDraftBanner = false;
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Failed to create booking';

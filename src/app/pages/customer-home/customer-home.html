@@ -5,8 +5,18 @@
   </div>
 
   <div class="grid">
-    <section class="card">
+      <section class="card" id="booking-card">
       <h2>Book a Service</h2>
+
+      <div class="draft-banner" *ngIf="showDraftBanner">
+        <p>
+          Selected service:
+          <strong>{{ selectedServiceTitle || category }}</strong>
+        </p>
+        <p class="draft-subtext">
+          Your service details were carried forward after login. Review them below before creating the booking.
+        </p>
+      </div>
 
       <div class="form">
 
@@ -50,7 +60,26 @@
         <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
         <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-        <button class="primary" (click)="createBooking()" [disabled]="loading">
+        <div class="confirm-box" *ngIf="showConfirmBooking">
+          <p>
+            Your selected service details are ready. Please confirm to create this booking.
+          </p>
+          <div class="confirm-actions">
+            <button class="primary" (click)="confirmDraftBooking()" [disabled]="loading">
+              {{ loading ? 'Creating Booking...' : 'Confirm and Create Booking' }}
+            </button>
+            <button class="secondary" type="button" (click)="dismissDraft()">
+              Edit Manually
+            </button>
+          </div>
+        </div>
+
+        <button
+          class="primary"
+          *ngIf="!showConfirmBooking"
+          (click)="createBooking()"
+          [disabled]="loading"
+        >
           {{ loading ? 'Creating Booking...' : 'Create Booking' }}
         </button>
       </div>
