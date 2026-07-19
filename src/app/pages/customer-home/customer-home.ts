@@ -37,9 +37,43 @@ export class CustomerHome implements OnInit {
   detectedArea = '';
   selectedServiceIcon = '🛠️';
 
+  applianceOptionsMap: { [key: string]: string[] } = {
+    ELECTRICAL: [
+      'Washing Machine',
+      'Refrigerator',
+      'Air Conditioner',
+      'Fan',
+      'Switch Board',
+      'Motor',
+      'Geyser'
+    ],
+    PLUMBING: [
+      'Tap',
+      'Pipe',
+      'Wash Basin',
+      'Shower',
+      'Toilet',
+      'Kitchen Sink',
+      'Water Tank'
+    ],
+    CARPENTER: [
+      'Door',
+      'Window',
+      'Cupboard',
+      'Table',
+      'Chair',
+      'Bed',
+      'Shelf'
+    ]
+  };
+
   ratingMap: { [bookingId: string]: number } = {};
   reviewTextMap: { [bookingId: string]: string } = {};
   submittedReviewIds: string[] = [];
+
+    get applianceOptions(): string[] {
+    return this.applianceOptionsMap[this.category] || [];
+  }
 
   constructor(
     private auth: Auth,
@@ -99,8 +133,10 @@ export class CustomerHome implements OnInit {
     this.longitude = draft.longitude ? Number(draft.longitude) : this.longitude;
 
     if (this.latitude && this.longitude) {
-      this.detectedArea = `Lat ${this.latitude}, Lng ${this.longitude}`;
+      this.detectedArea = this.locationSearch || `Lat ${this.latitude}, Lng ${this.longitude}`;
     }
+
+    this.onCategoryChange();
   }
 
     scrollToBookingCard() {
@@ -117,11 +153,33 @@ export class CustomerHome implements OnInit {
     this.locating = true;
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         this.latitude = Number(position.coords.latitude.toFixed(6));
         this.longitude = Number(position.coords.longitude.toFixed(6));
-        this.locationSearch = 'Current Location Selected';
-        this.detectedArea = `Lat ${this.latitude}, Lng ${this.longitude}`;
+
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${this.latitude}&lon=${this.longitude}`
+          );
+          const data = await response.json();
+
+          const address = data?.address || {};
+          const areaName =
+            address.suburb ||
+            address.neighbourhood ||
+            address.city_district ||
+            address.village ||
+            address.town ||
+            address.city ||
+            'Current Location Selected';
+
+          this.locationSearch = areaName;
+          this.detectedArea = data?.display_name || areaName;
+        } catch {
+          this.locationSearch = 'Current Location Selected';
+          this.detectedArea = `Lat ${this.latitude}, Lng ${this.longitude}`;
+        }
+
         this.locating = false;
       },
       () => {
@@ -143,6 +201,16 @@ export class CustomerHome implements OnInit {
     return '🛠️';
   }
 
+    onCategoryChange() {
+    const options = this.applianceOptions;
+    if (!options.includes(this.applianceType)) {
+      this.applianceType = '';
+    }
+
+    this.selectedServiceIcon = this.getServiceIcon(this.category);
+    this.selectedServiceTitle = this.selectedServiceTitle || this.category;
+  }
+
     confirmDraftBooking() {
     this.showConfirmBooking = false;
     this.showDraftBanner = false;
@@ -155,7 +223,7 @@ export class CustomerHome implements OnInit {
     this.incomingDraft = null;
     this.incomingSelectedService = null;
     this.selectedServiceTitle = '';
-    this.selectedServiceIcon = '🛠️';
+    this.selectedServiceIcon = this.getServiceIcon(this.category);
   }
 
   createBooking() {
@@ -182,7 +250,7 @@ export class CustomerHome implements OnInit {
         this.brand = '';
         this.model = '';
         this.selectedServiceTitle = '';
-        this.selectedServiceIcon = '🛠️';
+        this.selectedServiceIcon = this.getServiceIcon(this.category);
         this.detectedArea = '';
         this.showConfirmBooking = false;
         this.showDraftBanner = false;

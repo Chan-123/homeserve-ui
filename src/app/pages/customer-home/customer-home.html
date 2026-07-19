@@ -6,7 +6,7 @@
 
   <div class="grid">
       <section class="card" id="booking-card">
-      <h2>Book a Service</h2>
+      <h2>Continue your service request</h2>
 
       <div class="draft-banner" *ngIf="showDraftBanner">
         <div class="draft-banner-head">
@@ -37,10 +37,12 @@
           {{ locating ? 'Fetching current location...' : '📍 Use Current Location' }}
         </button>
 
-        <p class="gps-text" *ngIf="detectedArea">{{ detectedArea }}</p>
+        <p class="gps-text" *ngIf="detectedArea">
+          Detected area: {{ detectedArea }}
+        </p>
 
         <label for="category">Category</label>
-        <select id="category" [(ngModel)]="category" name="category">
+        <select id="category" [(ngModel)]="category" name="category" (ngModelChange)="onCategoryChange()">
           <option value="ELECTRICAL">Electrical</option>
           <option value="PLUMBING">Plumbing</option>
           <option value="CARPENTER">Carpenter</option>
@@ -54,7 +56,10 @@
         </select>
 
         <label for="applianceType">Appliance Type</label>
-        <input id="applianceType" [(ngModel)]="applianceType" name="applianceType" placeholder="Washing Machine" />
+        <select id="applianceType" [(ngModel)]="applianceType" name="applianceType">
+          <option value="">Select appliance</option>
+          <option *ngFor="let item of applianceOptions" [value]="item">{{ item }}</option>
+        </select>
 
         <label for="brand">Brand</label>
         <input id="brand" [(ngModel)]="brand" name="brand" placeholder="LG" />
@@ -134,7 +139,7 @@
         <span class="service-icon-badge large">{{ selectedServiceIcon }}</span>
         <div>
           <h3>Confirm your booking</h3>
-          <p>{{ selectedServiceTitle || category }}</p>
+          <p>You're continuing the request started from the services page: {{ selectedServiceTitle || category }}</p>
         </div>
       </div>
 

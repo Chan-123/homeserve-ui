@@ -334,3 +334,40 @@ select {
     flex-direction: column;
   }
 }
+
+.page {
+  background:
+    radial-gradient(circle at top left, rgba(1, 105, 111, 0.05), transparent 28%),
+    #f7f6f2;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(40, 37, 29, 0.08);
+  box-shadow: 0 14px 32px rgba(22, 25, 30, 0.06);
+}
+
+.topbar h1 {
+  letter-spacing: -0.02em;
+}
+
+.form input,
+.form select,
+.form textarea {
+  border-radius: 12px;
+  border: 1px solid rgba(40, 37, 29, 0.12);
+  background: #fff;
+}
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus {
+  outline: none;
+  border-color: #01696f;
+  box-shadow: 0 0 0 4px rgba(1, 105, 111, 0.08);
+}
+
+.booking-item {
+  border: 1px solid rgba(40, 37, 29, 0.08);
+  box-shadow: 0 8px 22px rgba(20, 20, 20, 0.04);
+}
