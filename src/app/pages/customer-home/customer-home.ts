@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { BookingItem, BookingService } from '../../services/booking';
+import { SocketService } from '../../services/socket';
+import { ReviewService } from '../../services/review';
 
 @Component({
   selector: 'app-customer-home',
@@ -20,28 +22,40 @@ export class CustomerHome implements OnInit {
   longitude: number | null = 80.2707;
   latitude: number | null = 13.0827;
 
+  bookings: BookingItem[] = [];
   loading = false;
   loadingBookings = false;
-  errorMessage = '';
   successMessage = '';
+  errorMessage = '';
 
-  bookings: BookingItem[] = [];
+  ratingMap: { [bookingId: string]: number } = {};
+  reviewTextMap: { [bookingId: string]: string } = {};
+  submittedReviewIds: string[] = [];
 
   constructor(
     private auth: Auth,
     private router: Router,
-    private bookingService: BookingService
+    private bookingService: BookingService,
+    private socketService: SocketService,
+    private reviewService: ReviewService
   ) {}
 
   ngOnInit(): void {
+    this.socketService.connect();
     this.loadBookings();
+
+    this.socketService.bookingStatusUpdated$.subscribe(() => {
+      this.loadBookings();
+    });
+
+    this.loadMyReviews();
   }
 
   createBooking() {
     this.loading = true;
-    this.errorMessage = '';
     this.successMessage = '';
-
+    this.errorMessage = '';
+    
     this.bookingService.createBooking({
       category: this.category,
       serviceType: this.serviceType,
@@ -52,23 +66,23 @@ export class CustomerHome implements OnInit {
       latitude: this.latitude ?? undefined
     }).subscribe({
       next: (res) => {
+        this.successMessage = res.message || 'Booking created successfully';
         this.loading = false;
-        this.successMessage = res.message;
+        this.loadBookings();
+        
         this.applianceType = '';
         this.brand = '';
         this.model = '';
-        this.loadBookings();
       },
       error: (err) => {
-        this.loading = false;
         this.errorMessage = err.error?.message || 'Failed to create booking';
+        this.loading = false;
       }
     });
   }
 
   loadBookings() {
     this.loadingBookings = true;
-
     this.bookingService.getMyBookings().subscribe({
       next: (res) => {
         this.bookings = res;
@@ -80,7 +94,46 @@ export class CustomerHome implements OnInit {
     });
   }
 
+    loadMyReviews() {
+    this.reviewService.getMyReviews().subscribe({
+      next: (reviews) => {
+        this.submittedReviewIds = reviews.map((item: any) => item.bookingId?._id || item.bookingId);
+      },
+      error: () => {}
+    });
+  }
+
+  submitReview(bookingId: string) {
+    const rating = this.ratingMap[bookingId];
+    const reviewText = this.reviewTextMap[bookingId] || '';
+
+    if (!rating || rating < 1 || rating > 5) {
+      alert('Please select a rating between 1 and 5');
+      return;
+    }
+
+    this.reviewService.createReview({
+      bookingId,
+      rating,
+      reviewText
+    }).subscribe({
+      next: () => {
+        this.submittedReviewIds.push(bookingId);
+        this.loadMyReviews();
+        this.successMessage = 'Review submitted successfully';
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Failed to submit review');
+      }
+    });
+  }
+
+  hasReviewed(bookingId: string): boolean {
+    return this.submittedReviewIds.includes(bookingId);
+  }
+
   logout() {
+    this.socketService.disconnect();
     this.auth.logout();
     this.router.navigate(['/login']);
   }

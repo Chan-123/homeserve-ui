@@ -49,6 +49,15 @@
           <p><strong>Model:</strong> {{ booking.model || '-' }}</p>
           <p><strong>Created:</strong> {{ booking.createdAt | date:'medium' }}</p>
 
+          <div class="actions" *ngIf="booking.status === 'REQUESTED'">
+            <button class="approve" (click)="respondToBooking(booking._id, 'ACCEPT')">
+              Accept
+            </button>
+            <button class="reject" (click)="respondToBooking(booking._id, 'REJECT')">
+              Reject
+            </button>
+          </div>
+
           <div class="actions" *ngIf="booking.status === 'ACCEPTED'">
             <button class="approve" (click)="updateStatus(booking._id, 'ENGINEER_ENROUTE')">
               Mark En Route

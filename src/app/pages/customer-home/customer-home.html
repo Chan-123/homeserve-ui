@@ -47,30 +47,51 @@
       </div>
     </section>
 
-    <section class="card">
-      <div class="section-head">
-        <h2>My Bookings</h2>
-        <button class="secondary" (click)="loadBookings()">Refresh</button>
-      </div>
+<div class="booking-list" *ngIf="bookings.length > 0">
+  <div class="booking-item" *ngFor="let booking of bookings">
+    <div class="row">
+      <strong>{{ booking.category }}</strong>
+      <span class="badge" [ngClass]="booking.status.toLowerCase()">
+        {{ booking.status }}
+      </span>
+    </div>
 
-      <p *ngIf="loadingBookings">Loading bookings...</p>
-      <p *ngIf="!loadingBookings && bookings.length === 0">No bookings yet.</p>
+    <p><strong>Service:</strong> {{ booking.serviceType }}</p>
+    <p><strong>Appliance:</strong> {{ booking.applianceType || '-' }}</p>
+    <p><strong>Brand:</strong> {{ booking.brand || '-' }}</p>
+    <p><strong>Model:</strong> {{ booking.model || '-' }}</p>
+    <p><strong>Created:</strong> {{ booking.createdAt | date:'medium' }}</p>
 
-      <div class="booking-list" *ngIf="bookings.length > 0">
-        <div class="booking-item" *ngFor="let booking of bookings">
-          <div class="row">
-            <strong>{{ booking.category }}</strong>
-            <span class="badge" [ngClass]="booking.status.toLowerCase()">
-  {{ booking.status }}
-</span>
-          </div>
-          <p><strong>Service:</strong> {{ booking.serviceType }}</p>
-          <p><strong>Appliance:</strong> {{ booking.applianceType || '-' }}</p>
-          <p><strong>Brand:</strong> {{ booking.brand || '-' }}</p>
-          <p><strong>Model:</strong> {{ booking.model || '-' }}</p>
-          <p><strong>Created:</strong> {{ booking.createdAt | date:'medium' }}</p>
-        </div>
-      </div>
-    </section>
+    <div class="review-box" *ngIf="booking.status === 'COMPLETED' && !hasReviewed(booking._id)">
+      <h3>Rate this service</h3>
+
+      <label>Rating</label>
+      <select [(ngModel)]="ratingMap[booking._id]" [name]="'rating-' + booking._id">
+        <option [ngValue]="undefined">Select rating</option>
+        <option [ngValue]="1">1 - Poor</option>
+        <option [ngValue]="2">2 - Fair</option>
+        <option [ngValue]="3">3 - Good</option>
+        <option [ngValue]="4">4 - Very Good</option>
+        <option [ngValue]="5">5 - Excellent</option>
+      </select>
+
+      <label>Review</label>
+      <textarea
+        [(ngModel)]="reviewTextMap[booking._id]"
+        [name]="'review-' + booking._id"
+        rows="4"
+        placeholder="Write your feedback"
+      ></textarea>
+
+      <button class="primary" (click)="submitReview(booking._id)">
+        Submit Review
+      </button>
+    </div>
+
+    <div class="review-done" *ngIf="booking.status === 'COMPLETED' && hasReviewed(booking._id)">
+      Review already submitted.
+    </div>
+  </div>
+</div>
   </div>
 </div>
