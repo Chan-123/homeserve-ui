@@ -7,8 +7,10 @@ import { EngineerDashboard } from './pages/engineer-dashboard/engineer-dashboard
 import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
 import { authGuard } from './guards/auth-guard';
 import { roleGuard } from './guards/role-guard';
+import { CustomerEntry } from './pages/customer-entry/customer-entry';
 
 export const routes: Routes = [
+  { path: 'services', component: CustomerEntry },
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'unauthorized', component: Unauthorized },
@@ -30,6 +32,6 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMIN'] }
   },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: 'services', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

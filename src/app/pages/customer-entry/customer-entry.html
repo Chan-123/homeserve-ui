@@ -1,0 +1,173 @@
+<div class="entry-page">
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">HomeServe</p>
+      <h1>Book trusted home services with a smoother start</h1>
+      <p class="hero-text">
+        Scroll through services, choose what you need, set your location, and continue to login or register only when you're ready.
+      </p>
+        <button class="primary-btn" (click)="scrollToServices()">
+        Explore Services
+        </button>
+    </div>
+
+    <div class="hero-card">
+      <div class="mini-stat">
+        <span>Nearby help</span>
+        <strong>Fast matching</strong>
+      </div>
+      <div class="mini-stat">
+        <span>Service options</span>
+        <strong>Electrical · Plumbing · Carpenter</strong>
+      </div>
+      <div class="mini-stat">
+        <span>Location ready</span>
+        <strong>Search or use GPS</strong>
+      </div>
+    </div>
+  </section>
+
+  <section id="services-section" class="services-section">
+    <div class="section-head">
+      <p class="eyebrow">Services</p>
+      <h2>Choose a service to start your request</h2>
+    </div>
+
+    <div class="services-grid">
+      <button
+        class="service-card"
+        *ngFor="let service of services; let i = index"
+        [class.selected]="selectedService?.title === service.title"
+        (click)="selectService(service)"
+      >
+        <div class="service-icon">{{ getIcon(service.icon) }}</div>
+        <div class="service-content">
+          <h3>{{ service.title }}</h3>
+          <p>{{ service.subtitle }}</p>
+          <span class="service-link">Select service</span>
+        </div>
+      </button>
+    </div>
+  </section>
+
+  <section
+    id="request-panel"
+    class="request-panel"
+    *ngIf="showForm"
+  >
+    <div class="section-head">
+      <p class="eyebrow">Your Request</p>
+      <h2>Tell us what you need</h2>
+    </div>
+
+    <div class="request-card">
+      <div class="selected-service">
+        <span class="selected-label">Selected Service</span>
+        <strong>{{ selectedService?.title }}</strong>
+      </div>
+
+      <div class="form-grid">
+        <div class="field full">
+          <label>Search your Location / Society / Apartment</label>
+          <input
+            type="text"
+            [(ngModel)]="form.locationSearch"
+            placeholder="Search your location"
+          />
+        </div>
+
+        <div class="field full">
+          <button class="gps-btn" type="button" (click)="useCurrentLocation()">
+            📍 {{ locating ? 'Fetching location...' : 'Use Current Location' }}
+          </button>
+        </div>
+
+        <div class="field">
+          <label>Category</label>
+          <select [(ngModel)]="form.category">
+            <option value="Electrical">Electrical</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Carpenter">Carpenter</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Service Type</label>
+          <select [(ngModel)]="form.serviceType">
+            <option value="Installation">Installation</option>
+            <option value="Service">Service</option>
+            <option value="ElectricianAssistance">Electrician Assistance</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Appliance Type</label>
+          <input
+            type="text"
+            [(ngModel)]="form.applianceType"
+            placeholder="Washing Machine"
+          />
+        </div>
+
+        <div class="field">
+          <label>Brand</label>
+          <input
+            type="text"
+            [(ngModel)]="form.brand"
+            placeholder="LG"
+          />
+        </div>
+
+        <div class="field">
+          <label>Model</label>
+          <input
+            type="text"
+            [(ngModel)]="form.model"
+            placeholder="LG123"
+          />
+        </div>
+
+        <div class="field">
+          <label>Latitude</label>
+          <input
+            type="text"
+            [(ngModel)]="form.latitude"
+            placeholder="13.0827"
+          />
+        </div>
+
+        <div class="field">
+          <label>Longitude</label>
+          <input
+            type="text"
+            [(ngModel)]="form.longitude"
+            placeholder="80.2707"
+          />
+        </div>
+      </div>
+
+      <div class="request-actions">
+        <button class="primary-btn" (click)="continueToAuth()">Continue</button>
+      </div>
+    </div>
+  </section>
+
+  <section
+    id="auth-panel"
+    class="auth-panel"
+    *ngIf="showAuthPrompt"
+  >
+    <div class="auth-card">
+      <p class="eyebrow">Continue</p>
+      <h2>Log in or create your account</h2>
+      <p>
+        Your service selection is ready. Continue with login or register as a new user.
+      </p>
+
+      <div class="auth-actions">
+        <button class="primary-btn" (click)="goToLogin()">Log in</button>
+        <button class="secondary-btn" (click)="goToRegister()">New User? Click here to Register</button>
+      </div>
+    </div>
+  </section>
+</div>
