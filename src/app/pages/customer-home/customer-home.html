@@ -9,13 +9,18 @@
       <h2>Book a Service</h2>
 
       <div class="draft-banner" *ngIf="showDraftBanner">
-        <p>
-          Selected service:
-          <strong>{{ selectedServiceTitle || category }}</strong>
-        </p>
-        <p class="draft-subtext">
-          Your service details were carried forward after login. Review them below before creating the booking.
-        </p>
+        <div class="draft-banner-head">
+          <span class="service-icon-badge">{{ selectedServiceIcon }}</span>
+          <div>
+            <p>
+              Selected service:
+              <strong>{{ selectedServiceTitle || category }}</strong>
+            </p>
+            <p class="draft-subtext">
+              Your service details were carried forward after login. Review them below before creating the booking.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div class="form">
@@ -27,6 +32,12 @@
           name="locationSearch"
           placeholder="Search your location"
         />
+
+        <button class="gps-btn" type="button" (click)="useCurrentLocation()">
+          {{ locating ? 'Fetching current location...' : '📍 Use Current Location' }}
+        </button>
+
+        <p class="gps-text" *ngIf="detectedArea">{{ detectedArea }}</p>
 
         <label for="category">Category</label>
         <select id="category" [(ngModel)]="category" name="category">
@@ -60,23 +71,8 @@
         <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
         <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-        <div class="confirm-box" *ngIf="showConfirmBooking">
-          <p>
-            Your selected service details are ready. Please confirm to create this booking.
-          </p>
-          <div class="confirm-actions">
-            <button class="primary" (click)="confirmDraftBooking()" [disabled]="loading">
-              {{ loading ? 'Creating Booking...' : 'Confirm and Create Booking' }}
-            </button>
-            <button class="secondary" type="button" (click)="dismissDraft()">
-              Edit Manually
-            </button>
-          </div>
-        </div>
-
         <button
           class="primary"
-          *ngIf="!showConfirmBooking"
           (click)="createBooking()"
           [disabled]="loading"
         >
@@ -131,5 +127,40 @@
     </div>
   </div>
 </div>
+  </div>
+    <div class="modal-backdrop" *ngIf="showConfirmBooking">
+    <div class="confirm-modal">
+      <div class="confirm-modal-head">
+        <span class="service-icon-badge large">{{ selectedServiceIcon }}</span>
+        <div>
+          <h3>Confirm your booking</h3>
+          <p>{{ selectedServiceTitle || category }}</p>
+        </div>
+      </div>
+
+      <div class="confirm-modal-body">
+        <p>Please review your carried-forward service request before creating the booking.</p>
+
+        <ul>
+          <li><strong>Location:</strong> {{ locationSearch || 'Not provided' }}</li>
+          <li><strong>Category:</strong> {{ category }}</li>
+          <li><strong>Service Type:</strong> {{ serviceType }}</li>
+          <li><strong>Appliance:</strong> {{ applianceType || '-' }}</li>
+          <li><strong>Brand:</strong> {{ brand || '-' }}</li>
+          <li><strong>Model:</strong> {{ model || '-' }}</li>
+          <li><strong>Latitude:</strong> {{ latitude ?? '-' }}</li>
+          <li><strong>Longitude:</strong> {{ longitude ?? '-' }}</li>
+        </ul>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="primary" (click)="confirmDraftBooking()" [disabled]="loading">
+          {{ loading ? 'Creating Booking...' : 'Confirm and Create Booking' }}
+        </button>
+        <button class="secondary" type="button" (click)="dismissDraft()">
+          Edit Manually
+        </button>
+      </div>
+    </div>
   </div>
 </div>

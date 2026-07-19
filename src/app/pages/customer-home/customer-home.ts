@@ -33,6 +33,9 @@ export class CustomerHome implements OnInit {
   selectedServiceTitle = '';
   showDraftBanner = false;
   showConfirmBooking = false;
+  locating = false;
+  detectedArea = '';
+  selectedServiceIcon = '🛠️';
 
   ratingMap: { [bookingId: string]: number } = {};
   reviewTextMap: { [bookingId: string]: string } = {};
@@ -56,6 +59,7 @@ export class CustomerHome implements OnInit {
       this.showDraftBanner = true;
       this.showConfirmBooking = true;
       this.selectedServiceTitle = this.incomingSelectedService?.title || this.incomingDraft?.category || '';
+      this.selectedServiceIcon = this.getServiceIcon(this.selectedServiceTitle);
 
       setTimeout(() => {
         this.scrollToBookingCard();
@@ -72,7 +76,7 @@ export class CustomerHome implements OnInit {
     this.loadMyReviews();
   }
 
-    applyIncomingDraft() {
+  applyIncomingDraft() {
     const draft = this.incomingDraft;
     if (!draft) return;
 
@@ -93,11 +97,50 @@ export class CustomerHome implements OnInit {
 
     this.latitude = draft.latitude ? Number(draft.latitude) : this.latitude;
     this.longitude = draft.longitude ? Number(draft.longitude) : this.longitude;
+
+    if (this.latitude && this.longitude) {
+      this.detectedArea = `Lat ${this.latitude}, Lng ${this.longitude}`;
+    }
   }
 
     scrollToBookingCard() {
     const el = document.getElementById('booking-card');
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+    useCurrentLocation() {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported in this browser');
+      return;
+    }
+
+    this.locating = true;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.latitude = Number(position.coords.latitude.toFixed(6));
+        this.longitude = Number(position.coords.longitude.toFixed(6));
+        this.locationSearch = 'Current Location Selected';
+        this.detectedArea = `Lat ${this.latitude}, Lng ${this.longitude}`;
+        this.locating = false;
+      },
+      () => {
+        this.locating = false;
+        alert('Unable to fetch current location');
+      }
+    );
+  }
+
+    getServiceIcon(serviceName: string): string {
+    const value = (serviceName || '').toLowerCase();
+
+    if (value.includes('electrical')) return '⚡';
+    if (value.includes('plumbing')) return '💧';
+    if (value.includes('carpenter')) return '🪚';
+    if (value.includes('appliance')) return '🛠️';
+    if (value.includes('emergency')) return '🚨';
+
+    return '🛠️';
   }
 
     confirmDraftBooking() {
@@ -112,6 +155,7 @@ export class CustomerHome implements OnInit {
     this.incomingDraft = null;
     this.incomingSelectedService = null;
     this.selectedServiceTitle = '';
+    this.selectedServiceIcon = '🛠️';
   }
 
   createBooking() {
@@ -138,6 +182,8 @@ export class CustomerHome implements OnInit {
         this.brand = '';
         this.model = '';
         this.selectedServiceTitle = '';
+        this.selectedServiceIcon = '🛠️';
+        this.detectedArea = '';
         this.showConfirmBooking = false;
         this.showDraftBanner = false;
       },
