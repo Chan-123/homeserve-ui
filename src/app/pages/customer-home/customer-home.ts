@@ -276,6 +276,8 @@ export class CustomerHome implements OnInit {
     const applianceOptions = this.applianceOptions;
     if (!applianceOptions.includes(this.applianceType)) {
       this.applianceType = '';
+      this.brand = '';
+      this.model = '';
     }
 
     const serviceTypeOptions = this.serviceTypeOptions;
@@ -283,8 +285,17 @@ export class CustomerHome implements OnInit {
       this.serviceType = serviceTypeOptions[0] || 'SERVICE';
     }
 
-    this.brand = '';
-    this.model = '';
+    const brandOptions = this.brandOptions;
+    if (this.brand && !brandOptions.includes(this.brand)) {
+      this.brand = '';
+      this.model = '';
+    }
+
+    const modelOptions = this.modelOptions;
+    if (this.model && !modelOptions.includes(this.model)) {
+      this.model = '';
+    }
+
     this.selectedServiceIcon = this.getServiceIcon(this.category);
     this.selectedServiceTitle = this.selectedServiceTitle || this.category;
   }

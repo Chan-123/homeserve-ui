@@ -80,11 +80,12 @@
           <button class="gps-btn" type="button" (click)="useCurrentLocation()">
             📍 {{ locating ? 'Fetching location...' : 'Use Current Location' }}
           </button>
+          <p class="gps-text" *ngIf="detectedArea">Detected area: {{ detectedArea }}</p>
         </div>
 
         <div class="field">
           <label>Category</label>
-          <select [(ngModel)]="form.category">
+          <select [(ngModel)]="form.category" (ngModelChange)="onCategoryChange()">
             <option value="Electrical">Electrical</option>
             <option value="Plumbing">Plumbing</option>
             <option value="Carpenter">Carpenter</option>
@@ -94,37 +95,46 @@
         <div class="field">
           <label>Service Type</label>
           <select [(ngModel)]="form.serviceType">
-            <option value="Installation">Installation</option>
-            <option value="Service">Service</option>
-            <option value="ElectricianAssistance">Electrician Assistance</option>
+            <option *ngFor="let type of serviceTypeOptions" [value]="type">
+              {{
+                type === 'Installation'
+                  ? 'Installation'
+                  : type === 'Service'
+                  ? 'Service'
+                  : 'Electrician Assistance'
+              }}
+            </option>
           </select>
         </div>
 
         <div class="field">
           <label>Appliance Type</label>
-          <input
-            type="text"
+          <select
             [(ngModel)]="form.applianceType"
-            placeholder="Washing Machine"
-          />
+            (ngModelChange)="onApplianceChange()"
+          >
+            <option value="">Select appliance</option>
+            <option *ngFor="let item of applianceOptions" [value]="item">{{ item }}</option>
+          </select>
         </div>
 
         <div class="field">
           <label>Brand</label>
-          <input
-            type="text"
+          <select
             [(ngModel)]="form.brand"
-            placeholder="LG"
-          />
+            (ngModelChange)="onBrandChange()"
+          >
+            <option value="">Select brand</option>
+            <option *ngFor="let item of brandOptions" [value]="item">{{ item }}</option>
+          </select>
         </div>
 
         <div class="field">
           <label>Model</label>
-          <input
-            type="text"
-            [(ngModel)]="form.model"
-            placeholder="LG123"
-          />
+          <select [(ngModel)]="form.model">
+            <option value="">Select model</option>
+            <option *ngFor="let item of modelOptions" [value]="item">{{ item }}</option>
+          </select>
         </div>
 
         <div class="field">
