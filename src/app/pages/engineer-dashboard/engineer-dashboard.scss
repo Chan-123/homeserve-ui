@@ -98,6 +98,25 @@
   color: #a12c7b;
 }
 
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.status-toggle {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #d4dfcc;
+  color: #7a7974;
+}
+
+.status-toggle.online {
+  background: #437a22;
+  color: #fff;
+}
+
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: 1fr;

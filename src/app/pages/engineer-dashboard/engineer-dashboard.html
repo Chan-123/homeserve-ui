@@ -1,8 +1,18 @@
 <div class="page">
-  <div class="topbar">
-    <h1>Engineer Dashboard</h1>
+<div class="topbar">
+  <h1>Engineer Dashboard</h1>
+  <div class="topbar-actions">
+    <button
+      class="status-toggle"
+      [class.online]="isOnline"
+      [disabled]="statusLoading"
+      (click)="toggleStatus()"
+    >
+      {{ isOnline ? 'Online' : 'Offline' }}
+    </button>
     <button (click)="logout()">Logout</button>
   </div>
+</div>
 
   <div class="grid">
     <section class="card">

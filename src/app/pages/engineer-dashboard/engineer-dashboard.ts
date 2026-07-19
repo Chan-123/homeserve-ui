@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { BookingItem, BookingService } from '../../services/booking';
 import { SocketService } from '../../services/socket';
-
+import { EngineerService } from '../../services/engineer';
 @Component({
   selector: 'app-engineer-dashboard',
   imports: [CommonModule],
@@ -16,17 +16,21 @@ export class EngineerDashboard implements OnInit {
   incomingRequests: any[] = [];
   loading = false;
   errorMessage = '';
+  isOnline = false;
+  statusLoading = false;
 
   constructor(
     private auth: Auth,
     private router: Router,
     private bookingService: BookingService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private engineerService: EngineerService
   ) {}
 
   ngOnInit(): void {
     this.socketService.connect();
     this.loadBookings();
+    this.loadProfile();
 
     this.socketService.incomingRequest$.subscribe((request) => {
       this.incomingRequests.unshift(request);
@@ -34,6 +38,31 @@ export class EngineerDashboard implements OnInit {
 
     this.socketService.bookingStatusUpdated$.subscribe(() => {
       this.loadBookings();
+    });
+  }
+
+  loadProfile() {
+    this.engineerService.getMyProfile().subscribe({
+      next: (profile) => {
+        this.isOnline = profile.status === 'ONLINE';
+      },
+      error: () => {}
+    });
+  }
+
+  toggleStatus() {
+    this.statusLoading = true;
+    const newStatus = this.isOnline ? 'OFFLINE' : 'ONLINE';
+
+    this.engineerService.toggleStatus(newStatus).subscribe({
+      next: () => {
+        this.isOnline = newStatus === 'ONLINE';
+        this.statusLoading = false;
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Failed to update status');
+        this.statusLoading = false;
+      }
     });
   }
 
