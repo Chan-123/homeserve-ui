@@ -50,22 +50,44 @@
 
         <label for="serviceType">Service Type</label>
         <select id="serviceType" [(ngModel)]="serviceType" name="serviceType">
-          <option value="INSTALLATION">Installation</option>
-          <option value="SERVICE">Service</option>
-          <option value="ELECTRICIAN_ASSISTANCE">Electrician Assistance</option>
+          <option *ngFor="let type of serviceTypeOptions" [value]="type">
+            {{
+              type === 'INSTALLATION'
+                ? 'Installation'
+                : type === 'SERVICE'
+                ? 'Service'
+                : 'Electrician Assistance'
+            }}
+          </option>
         </select>
 
         <label for="applianceType">Appliance Type</label>
-        <select id="applianceType" [(ngModel)]="applianceType" name="applianceType">
+        <select
+          id="applianceType"
+          [(ngModel)]="applianceType"
+          name="applianceType"
+          (ngModelChange)="onApplianceChange()"
+        >
           <option value="">Select appliance</option>
           <option *ngFor="let item of applianceOptions" [value]="item">{{ item }}</option>
         </select>
 
         <label for="brand">Brand</label>
-        <input id="brand" [(ngModel)]="brand" name="brand" placeholder="LG" />
+        <select
+          id="brand"
+          [(ngModel)]="brand"
+          name="brand"
+          (ngModelChange)="onBrandChange()"
+        >
+          <option value="">Select brand</option>
+          <option *ngFor="let item of brandOptions" [value]="item">{{ item }}</option>
+        </select>
 
         <label for="model">Model</label>
-        <input id="model" [(ngModel)]="model" name="model" placeholder="WM123" />
+        <select id="model" [(ngModel)]="model" name="model">
+          <option value="">Select model</option>
+          <option *ngFor="let item of modelOptions" [value]="item">{{ item }}</option>
+        </select>
 
         <label for="longitude">Longitude</label>
         <input id="longitude" type="number" [(ngModel)]="longitude" name="longitude" />
@@ -166,6 +188,13 @@
           Edit Manually
         </button>
       </div>
+    </div>
+  </div>
+    <div class="success-splash-backdrop" *ngIf="showSuccessSplash">
+    <div class="success-splash">
+      <div class="success-icon">✓</div>
+      <h3>Booking created</h3>
+      <p>Your request has been sent successfully. Nearby engineer matching is in progress.</p>
     </div>
   </div>
 </div>

@@ -28,6 +28,7 @@ export class CustomerHome implements OnInit {
   successMessage = '';
   errorMessage = '';
   locationSearch = '';
+  showSuccessSplash = false;
   incomingDraft: any = null;
   incomingSelectedService: any = null;
   selectedServiceTitle = '';
@@ -67,12 +68,82 @@ export class CustomerHome implements OnInit {
     ]
   };
 
+  serviceTypeOptionsMap: { [key: string]: string[] } = {
+    ELECTRICAL: ['INSTALLATION', 'SERVICE', 'ELECTRICIAN_ASSISTANCE'],
+    PLUMBING: ['INSTALLATION', 'SERVICE'],
+    CARPENTER: ['INSTALLATION', 'SERVICE']
+  };
+
+  brandOptionsMap: { [key: string]: string[] } = {
+    'Washing Machine': ['LG', 'Samsung', 'Whirlpool', 'IFB', 'Bosch'],
+    'Refrigerator': ['LG', 'Samsung', 'Whirlpool', 'Godrej', 'Haier'],
+    'Air Conditioner': ['Daikin', 'LG', 'Samsung', 'Voltas', 'Blue Star'],
+    'Fan': ['Usha', 'Havells', 'Crompton', 'Orient'],
+    'Geyser': ['Racold', 'V-Guard', 'Bajaj', 'Havells'],
+    'Tap': ['Jaquar', 'Hindware', 'Parryware'],
+    'Pipe': ['Ashirvad', 'Finolex', 'Supreme'],
+    'Wash Basin': ['Jaquar', 'Hindware', 'Cera'],
+    'Toilet': ['Parryware', 'Hindware', 'Cera'],
+    'Door': ['Godrej', 'Greenply', 'CenturyPly'],
+    'Window': ['Fenesta', 'Greenply'],
+    'Cupboard': ['Godrej', 'Ikea', 'Nilkamal'],
+    'Table': ['Ikea', 'Nilkamal', 'Durian'],
+    'Chair': ['Ikea', 'Nilkamal', 'Durian'],
+    'Bed': ['Wakefit', 'Durian', 'Ikea']
+  };
+
+  modelOptionsMap: { [key: string]: string[] } = {
+    LG: ['LG123', 'LG456', 'LG789'],
+    Samsung: ['SAM100', 'SAM220', 'SAM330'],
+    Whirlpool: ['WH100', 'WH200'],
+    IFB: ['IFB6KG', 'IFB7KG'],
+    Bosch: ['BOSCHX1', 'BOSCHX2'],
+    Daikin: ['DAI-1T', 'DAI-1.5T'],
+    Voltas: ['VOLT125', 'VOLT183'],
+    'Blue Star': ['BS-SPLIT-1', 'BS-WIN-2'],
+    Usha: ['USHA-A1', 'USHA-A2'],
+    Havells: ['HAV-G1', 'HAV-G2'],
+    Crompton: ['CROM-AIR', 'CROM-HS'],
+    Orient: ['ORI-56', 'ORI-48'],
+    Racold: ['RAC-10L', 'RAC-15L'],
+    'V-Guard': ['VG-10', 'VG-15'],
+    Bajaj: ['BAJ-GL', 'BAJ-SH'],
+    Jaquar: ['JQ-101', 'JQ-202'],
+    Hindware: ['HW-11', 'HW-22'],
+    Parryware: ['PW-10', 'PW-20'],
+    Ashirvad: ['ASH-P1', 'ASH-P2'],
+    Finolex: ['FIN-100', 'FIN-200'],
+    Supreme: ['SUP-11', 'SUP-22'],
+    Cera: ['CER-1', 'CER-2'],
+    Godrej: ['GD-100', 'GD-200'],
+    Greenply: ['GP-A1', 'GP-A2'],
+    CenturyPly: ['CP-10', 'CP-20'],
+    Fenesta: ['FEN-1', 'FEN-2'],
+    Ikea: ['IK-100', 'IK-200'],
+    Nilkamal: ['NK-10', 'NK-20'],
+    Durian: ['DUR-1', 'DUR-2'],
+    Wakefit: ['WF-78', 'WF-90'],
+    Haier: ['HAI-11', 'HAI-22']
+  };
+
   ratingMap: { [bookingId: string]: number } = {};
   reviewTextMap: { [bookingId: string]: string } = {};
   submittedReviewIds: string[] = [];
 
     get applianceOptions(): string[] {
     return this.applianceOptionsMap[this.category] || [];
+  }
+
+  get serviceTypeOptions(): string[] {
+    return this.serviceTypeOptionsMap[this.category] || [];
+  }
+
+  get brandOptions(): string[] {
+    return this.brandOptionsMap[this.applianceType] || [];
+  }
+
+  get modelOptions(): string[] {
+    return this.modelOptionsMap[this.brand] || [];
   }
 
   constructor(
@@ -202,13 +273,35 @@ export class CustomerHome implements OnInit {
   }
 
     onCategoryChange() {
-    const options = this.applianceOptions;
-    if (!options.includes(this.applianceType)) {
+    const applianceOptions = this.applianceOptions;
+    if (!applianceOptions.includes(this.applianceType)) {
       this.applianceType = '';
     }
 
+    const serviceTypeOptions = this.serviceTypeOptions;
+    if (!serviceTypeOptions.includes(this.serviceType)) {
+      this.serviceType = serviceTypeOptions[0] || 'SERVICE';
+    }
+
+    this.brand = '';
+    this.model = '';
     this.selectedServiceIcon = this.getServiceIcon(this.category);
     this.selectedServiceTitle = this.selectedServiceTitle || this.category;
+  }
+
+    onApplianceChange() {
+    const brandOptions = this.brandOptions;
+    if (!brandOptions.includes(this.brand)) {
+      this.brand = '';
+    }
+    this.model = '';
+  }
+
+    onBrandChange() {
+    const modelOptions = this.modelOptions;
+    if (!modelOptions.includes(this.model)) {
+      this.model = '';
+    }
   }
 
     confirmDraftBooking() {
@@ -244,7 +337,12 @@ export class CustomerHome implements OnInit {
         this.successMessage = res.message || 'Booking created successfully';
         this.loading = false;
         this.loadBookings();
-        
+
+        this.showSuccessSplash = true;
+        setTimeout(() => {
+          this.showSuccessSplash = false;
+        }, 2200);
+
         this.locationSearch = '';
         this.applianceType = '';
         this.brand = '';
