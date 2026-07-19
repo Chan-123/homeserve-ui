@@ -27,6 +27,9 @@ export class CustomerHome implements OnInit {
   loadingBookings = false;
   successMessage = '';
   errorMessage = '';
+  locationSearch = '';
+  incomingDraft: any = null;
+  incomingSelectedService: any = null;
 
   ratingMap: { [bookingId: string]: number } = {};
   reviewTextMap: { [bookingId: string]: string } = {};
@@ -41,6 +44,14 @@ export class CustomerHome implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const nav = history.state;
+    this.incomingDraft = nav?.bookingDraft || null;
+    this.incomingSelectedService = nav?.selectedService || null;
+
+    if (this.incomingDraft) {
+      this.applyIncomingDraft();
+    }
+
     this.socketService.connect();
     this.loadBookings();
 
@@ -49,6 +60,29 @@ export class CustomerHome implements OnInit {
     });
 
     this.loadMyReviews();
+  }
+
+    applyIncomingDraft() {
+    const draft = this.incomingDraft;
+    if (!draft) return;
+
+    this.locationSearch = draft.locationSearch || '';
+    this.category = (draft.category || this.category).toUpperCase();
+
+    if (draft.serviceType === 'Installation') {
+      this.serviceType = 'INSTALLATION';
+    } else if (draft.serviceType === 'Service') {
+      this.serviceType = 'SERVICE';
+    } else if (draft.serviceType === 'ElectricianAssistance') {
+      this.serviceType = 'ELECTRICIAN_ASSISTANCE';
+    }
+
+    this.applianceType = draft.applianceType || '';
+    this.brand = draft.brand || '';
+    this.model = draft.model || '';
+
+    this.latitude = draft.latitude ? Number(draft.latitude) : this.latitude;
+    this.longitude = draft.longitude ? Number(draft.longitude) : this.longitude;
   }
 
   createBooking() {
@@ -70,6 +104,7 @@ export class CustomerHome implements OnInit {
         this.loading = false;
         this.loadBookings();
         
+        this.locationSearch = '';
         this.applianceType = '';
         this.brand = '';
         this.model = '';

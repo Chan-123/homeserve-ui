@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -10,7 +10,7 @@ import { Auth } from '../../services/auth';
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
-export class Register {
+export class Register implements OnInit {
   name = '';
   phone = '';
   email = '';
@@ -20,8 +20,16 @@ export class Register {
   errorMessage = '';
   successMessage = '';
   loading = false;
+  bookingDraft: any = null;
+  selectedService: any = null;
 
   constructor(private auth: Auth, private router: Router) {}
+
+    ngOnInit(): void {
+    const nav = history.state;
+    this.bookingDraft = nav?.bookingDraft || null;
+    this.selectedService = nav?.selectedService || null;
+  }
 
   onSubmit() {
     this.errorMessage = '';
@@ -47,7 +55,12 @@ export class Register {
           return;
         }
 
-        this.router.navigate(['/customer/home']);
+        this.router.navigate(['/customer/home'], {
+          state: {
+            bookingDraft: this.bookingDraft,
+            selectedService: this.selectedService
+          }
+        });
       },
       error: (err) => {
         this.loading = false;

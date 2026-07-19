@@ -9,6 +9,15 @@
       <h2>Book a Service</h2>
 
       <div class="form">
+
+        <label for="locationSearch">Search your Location / Society / Apartment</label>
+        <input
+          id="locationSearch"
+          [(ngModel)]="locationSearch"
+          name="locationSearch"
+          placeholder="Search your location"
+        />
+
         <label for="category">Category</label>
         <select id="category" [(ngModel)]="category" name="category">
           <option value="ELECTRICAL">Electrical</option>
