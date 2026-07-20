@@ -41,7 +41,17 @@
       <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
     </section>
 
-<div class="booking-list" *ngIf="bookings.length > 0">
+<div class="booking-list" *ngIf="loadingBookings">
+  <div class="booking-item skeleton-card" *ngFor="let item of [1,2,3]">
+    <div class="skeleton skeleton-line short"></div>
+    <div class="skeleton skeleton-line"></div>
+    <div class="skeleton skeleton-line"></div>
+    <div class="skeleton skeleton-line"></div>
+    <div class="skeleton skeleton-line medium"></div>
+  </div>
+</div>
+
+<div class="booking-list" *ngIf="!loadingBookings && bookings.length > 0">
   <div class="booking-item" *ngFor="let booking of bookings">
     <div class="row">
       <strong>{{ booking.category }}</strong>
@@ -56,7 +66,29 @@
     <p><strong>Model:</strong> {{ booking.model || '-' }}</p>
     <p><strong>Created:</strong> {{ booking.createdAt | date:'medium' }}</p>
 
-    <div class="review-box" *ngIf="booking.status === 'COMPLETED' && !hasReviewed(booking._id)">
+    <div class="booking-actions">
+      <button
+        class="secondary"
+        *ngIf="booking.status === 'COMPLETED'"
+        (click)="bookAgain(booking)">
+        Book Again
+      </button>
+
+      <button
+        class="secondary danger"
+        *ngIf="booking.status === 'REQUESTED'"
+        (click)="cancelBooking(booking._id)">
+        Cancel Booking
+      </button>
+    </div>
+
+    <div class="review-box" *ngIf="booking.status === 'COMPLETED' && loadingReviews">
+      <div class="skeleton skeleton-line short"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line medium"></div>
+    </div>
+
+    <div class="review-box" *ngIf="booking.status === 'COMPLETED' && !loadingReviews && !hasReviewed(booking._id)">
       <h3>Rate this service</h3>
 
       <label>Rating</label>
@@ -87,6 +119,9 @@
     </div>
   </div>
 </div>
+  </div>
+  <div class="empty-state" *ngIf="!loadingBookings && bookings.length === 0">
+  No bookings yet. Create your first service request.
   </div>
     <div class="modal-backdrop" *ngIf="showConfirmBooking">
     <div class="confirm-modal">

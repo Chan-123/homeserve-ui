@@ -80,4 +80,12 @@ export class BookingService {
       { headers: this.getHeaders() }
     );
   }
+
+  cancelBooking(id: string): Observable<{ message: string; booking: BookingItem }> {
+    return this.http.patch<{ message: string; booking: BookingItem }>(
+      `${this.baseUrl}/${id}/cancel`,
+      {},
+      { headers: this.getHeaders() }
+    );
+  }
 }

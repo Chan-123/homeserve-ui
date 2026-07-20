@@ -32,6 +32,7 @@ export class CustomerHome implements OnInit {
   ratingMap: { [bookingId: string]: number } = {};
   reviewTextMap: { [bookingId: string]: string } = {};
   submittedReviewIds: string[] = [];
+  loadingReviews = false;
 
   constructor(
     private auth: Auth,
@@ -118,6 +119,44 @@ export class CustomerHome implements OnInit {
     this.selectedServiceIcon = this.getServiceIcon('Electrical');
   }
 
+    bookAgain(booking: BookingItem) {
+    this.draftData = {
+      locationSearch: '',
+      category: booking.category || 'ELECTRICAL',
+      serviceType: booking.serviceType || 'SERVICE',
+      applianceType: booking.applianceType || '',
+      brand: booking.brand || '',
+      model: booking.model || '',
+      latitude: '',
+      longitude: ''
+    };
+
+    this.showDraftBanner = false;
+    this.showConfirmBooking = false;
+    this.selectedServiceTitle = booking.category || '';
+    this.selectedServiceIcon = this.getServiceIcon(booking.category || '');
+
+    setTimeout(() => {
+      this.scrollToBookingCard();
+    }, 100);
+  }
+
+  cancelBooking(bookingId: string) {
+    const confirmed = confirm('Are you sure you want to cancel this booking?');
+    if (!confirmed) return;
+
+    this.bookingService.cancelBooking(bookingId).subscribe({
+      next: (res) => {
+        this.successMessage = res.message || 'Booking cancelled successfully';
+        this.errorMessage = '';
+        this.loadBookings();
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Failed to cancel booking';
+      }
+    });
+  }
+
   submitBookingForm(data: BookingFormData) {
     this.loading = true;
     this.successMessage = '';
@@ -178,11 +217,16 @@ export class CustomerHome implements OnInit {
   }
 
     loadMyReviews() {
+    this.loadingReviews = true;
+
     this.reviewService.getMyReviews().subscribe({
       next: (reviews) => {
         this.submittedReviewIds = reviews.map((item: any) => item.bookingId?._id || item.bookingId);
+        this.loadingReviews = false;
       },
-      error: () => {}
+      error: () => {
+        this.loadingReviews = false;
+      }
     });
   }
 
