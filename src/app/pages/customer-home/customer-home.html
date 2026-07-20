@@ -14,7 +14,7 @@
           <div>
             <p>
               Selected service:
-              <strong>{{ selectedServiceTitle || category }}</strong>
+              <strong>{{ selectedServiceTitle || (draftData?.category === 'ELECTRICAL' ? 'Electrical' : draftData?.category === 'PLUMBING' ? 'Plumbing' : draftData?.category === 'CARPENTER' ? 'Carpenter' : draftData?.category) }}</strong>
             </p>
             <p class="draft-subtext">
               Your service details were carried forward after login. Review them below before creating the booking.
@@ -23,89 +23,22 @@
         </div>
       </div>
 
-      <div class="form">
+      <app-booking-form
+        [initialData]="draftData"
+        [selectedServiceTitle]="''"
+        mode="booking"
+        submitLabel="Create Booking"
+        [loading]="loading"
+        [categoryOptions]="[
+          { value: 'ELECTRICAL', label: 'Electrical' },
+          { value: 'PLUMBING', label: 'Plumbing' },
+          { value: 'CARPENTER', label: 'Carpenter' }
+        ]"
+        (submitBooking)="submitBookingForm($event)">
+      </app-booking-form>
 
-        <label for="locationSearch">Search your Location / Society / Apartment</label>
-        <input
-          id="locationSearch"
-          [(ngModel)]="locationSearch"
-          name="locationSearch"
-          placeholder="Search your location"
-        />
-
-        <button class="gps-btn" type="button" (click)="useCurrentLocation()">
-          {{ locating ? 'Fetching current location...' : '📍 Use Current Location' }}
-        </button>
-
-        <p class="gps-text" *ngIf="detectedArea">
-          Detected area: {{ detectedArea }}
-        </p>
-
-        <label for="category">Category</label>
-        <select id="category" [(ngModel)]="category" name="category" (ngModelChange)="onCategoryChange()">
-          <option value="ELECTRICAL">Electrical</option>
-          <option value="PLUMBING">Plumbing</option>
-          <option value="CARPENTER">Carpenter</option>
-        </select>
-
-        <label for="serviceType">Service Type</label>
-        <select id="serviceType" [(ngModel)]="serviceType" name="serviceType">
-          <option *ngFor="let type of serviceTypeOptions" [value]="type">
-            {{
-              type === 'INSTALLATION'
-                ? 'Installation'
-                : type === 'SERVICE'
-                ? 'Service'
-                : 'Electrician Assistance'
-            }}
-          </option>
-        </select>
-
-        <label for="applianceType">Appliance Type</label>
-        <select
-          id="applianceType"
-          [(ngModel)]="applianceType"
-          name="applianceType"
-          (ngModelChange)="onApplianceChange()"
-        >
-          <option value="">Select appliance</option>
-          <option *ngFor="let item of applianceOptions" [value]="item">{{ item }}</option>
-        </select>
-
-        <label for="brand">Brand</label>
-        <select
-          id="brand"
-          [(ngModel)]="brand"
-          name="brand"
-          (ngModelChange)="onBrandChange()"
-        >
-          <option value="">Select brand</option>
-          <option *ngFor="let item of brandOptions" [value]="item">{{ item }}</option>
-        </select>
-
-        <label for="model">Model</label>
-        <select id="model" [(ngModel)]="model" name="model">
-          <option value="">Select model</option>
-          <option *ngFor="let item of modelOptions" [value]="item">{{ item }}</option>
-        </select>
-
-        <label for="longitude">Longitude</label>
-        <input id="longitude" type="number" [(ngModel)]="longitude" name="longitude" />
-
-        <label for="latitude">Latitude</label>
-        <input id="latitude" type="number" [(ngModel)]="latitude" name="latitude" />
-
-        <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
-        <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-        <button
-          class="primary"
-          (click)="createBooking()"
-          [disabled]="loading"
-        >
-          {{ loading ? 'Creating Booking...' : 'Create Booking' }}
-        </button>
-      </div>
+      <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
     </section>
 
 <div class="booking-list" *ngIf="bookings.length > 0">
@@ -161,7 +94,7 @@
         <span class="service-icon-badge large">{{ selectedServiceIcon }}</span>
         <div>
           <h3>Confirm your booking</h3>
-          <p>You're continuing the request started from the services page: {{ selectedServiceTitle || category }}</p>
+          <p>You're continuing the request started from the services page: {{ selectedServiceTitle || (draftData?.category === 'ELECTRICAL' ? 'Electrical' : draftData?.category === 'PLUMBING' ? 'Plumbing' : draftData?.category === 'CARPENTER' ? 'Carpenter' : draftData?.category) }}</p>
         </div>
       </div>
 
@@ -169,14 +102,14 @@
         <p>Please review your carried-forward service request before creating the booking.</p>
 
         <ul>
-          <li><strong>Location:</strong> {{ locationSearch || 'Not provided' }}</li>
-          <li><strong>Category:</strong> {{ category }}</li>
-          <li><strong>Service Type:</strong> {{ serviceType }}</li>
-          <li><strong>Appliance:</strong> {{ applianceType || '-' }}</li>
-          <li><strong>Brand:</strong> {{ brand || '-' }}</li>
-          <li><strong>Model:</strong> {{ model || '-' }}</li>
-          <li><strong>Latitude:</strong> {{ latitude ?? '-' }}</li>
-          <li><strong>Longitude:</strong> {{ longitude ?? '-' }}</li>
+          <li><strong>Location:</strong> {{ draftData?.locationSearch || 'Not provided' }}</li>
+          <li><strong>Category:</strong> {{ draftData?.category }}</li>
+          <li><strong>Service Type:</strong> {{ draftData?.serviceType }}</li>
+          <li><strong>Appliance:</strong> {{ draftData?.applianceType || '-' }}</li>
+          <li><strong>Brand:</strong> {{ draftData?.brand || '-' }}</li>
+          <li><strong>Model:</strong> {{ draftData?.model || '-' }}</li>
+          <li><strong>Latitude:</strong> {{ draftData?.latitude || '-' }}</li>
+          <li><strong>Longitude:</strong> {{ draftData?.longitude || '-' }}</li>
         </ul>
       </div>
 

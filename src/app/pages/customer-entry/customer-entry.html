@@ -66,99 +66,13 @@
         <strong>{{ selectedService?.title }}</strong>
       </div>
 
-      <div class="form-grid">
-        <div class="field full">
-          <label>Search your Location / Society / Apartment</label>
-          <input
-            type="text"
-            [(ngModel)]="form.locationSearch"
-            placeholder="Search your location"
-          />
-        </div>
-
-        <div class="field full">
-          <button class="gps-btn" type="button" (click)="useCurrentLocation()">
-            📍 {{ locating ? 'Fetching location...' : 'Use Current Location' }}
-          </button>
-          <p class="gps-text" *ngIf="detectedArea">Detected area: {{ detectedArea }}</p>
-        </div>
-
-        <div class="field">
-          <label>Category</label>
-          <select [(ngModel)]="form.category" (ngModelChange)="onCategoryChange()">
-            <option value="Electrical">Electrical</option>
-            <option value="Plumbing">Plumbing</option>
-            <option value="Carpenter">Carpenter</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Service Type</label>
-          <select [(ngModel)]="form.serviceType">
-            <option *ngFor="let type of serviceTypeOptions" [value]="type">
-              {{
-                type === 'Installation'
-                  ? 'Installation'
-                  : type === 'Service'
-                  ? 'Service'
-                  : 'Electrician Assistance'
-              }}
-            </option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Appliance Type</label>
-          <select
-            [(ngModel)]="form.applianceType"
-            (ngModelChange)="onApplianceChange()"
-          >
-            <option value="">Select appliance</option>
-            <option *ngFor="let item of applianceOptions" [value]="item">{{ item }}</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Brand</label>
-          <select
-            [(ngModel)]="form.brand"
-            (ngModelChange)="onBrandChange()"
-          >
-            <option value="">Select brand</option>
-            <option *ngFor="let item of brandOptions" [value]="item">{{ item }}</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Model</label>
-          <select [(ngModel)]="form.model">
-            <option value="">Select model</option>
-            <option *ngFor="let item of modelOptions" [value]="item">{{ item }}</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Latitude</label>
-          <input
-            type="text"
-            [(ngModel)]="form.latitude"
-            placeholder="13.0827"
-          />
-        </div>
-
-        <div class="field">
-          <label>Longitude</label>
-          <input
-            type="text"
-            [(ngModel)]="form.longitude"
-            placeholder="80.2707"
-          />
-        </div>
-      </div>
-
-      <div class="request-actions">
-        <button class="primary-btn" (click)="continueToAuth()">Continue</button>
-      </div>
+      <app-booking-form
+        [initialData]="draftData"
+        [selectedServiceTitle]="''"
+        mode="draft"
+        submitLabel="Continue"
+        (continueDraft)="continueToAuth($event)">
+      </app-booking-form>
     </div>
   </section>
 
