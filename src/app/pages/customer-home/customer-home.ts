@@ -161,6 +161,18 @@ export class CustomerHome implements OnInit {
     });
   }
 
+  confirmPayment(bookingId: string) {
+    this.bookingService.updateBookingStatus(bookingId, 'PAYMENT_CONFIRMED').subscribe({
+      next: () => {
+        this.successMessage = 'Payment confirmed successfully';
+        this.loadBookings();
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Failed to confirm payment';
+      }
+    });
+  }
+
   submitBookingForm(data: BookingFormData) {
     this.loading = true;
     this.successMessage = '';

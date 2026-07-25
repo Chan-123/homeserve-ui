@@ -73,6 +73,27 @@
       <div class="otp-code">{{ otpMap[booking._id] }}</div>
     </div>
 
+        <div class="status-note" *ngIf="booking.status === 'PENDING_PARTS'">
+      <p>Your appliance requires spare parts. We're procuring them from our warehouse — you'll be notified once repair resumes.</p>
+    </div>
+
+    <div class="status-note" *ngIf="booking.status === 'WAREHOUSE_APPROVED'">
+      <p>Spare parts have been approved and are ready for pickup by your engineer.</p>
+    </div>
+
+    <div class="status-note" *ngIf="booking.status === 'IN_REPAIR'">
+      <p>Your appliance is currently under repair.</p>
+    </div>
+
+    <div class="status-note" *ngIf="booking.status === 'READY_FOR_DELIVERY'">
+      <p>Repair complete — your appliance is ready for delivery.</p>
+    </div>
+
+    <div class="status-note" *ngIf="booking.status === 'DELIVERED'">
+      <p>Your appliance has been delivered. Please confirm payment to complete this booking.</p>
+      <button class="primary" (click)="confirmPayment(booking._id)">Confirm Payment</button>
+    </div>
+
     <div class="booking-actions">
 
     <div class="booking-actions">

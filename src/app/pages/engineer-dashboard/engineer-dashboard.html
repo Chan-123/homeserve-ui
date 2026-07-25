@@ -115,6 +115,42 @@
             </div>
           </div>
 
+                    <div class="actions" *ngIf="booking.status === 'PENDING_PARTS'">
+            <button class="approve" (click)="updateStatus(booking._id, 'WAREHOUSE_APPROVED')">
+              Confirm Parts Received
+            </button>
+          </div>
+
+          <div class="actions" *ngIf="booking.status === 'WAREHOUSE_APPROVED'">
+            <button class="approve" (click)="updateStatus(booking._id, 'IN_REPAIR')">
+              Start Repair
+            </button>
+          </div>
+
+          <div class="actions" *ngIf="booking.status === 'IN_REPAIR'">
+            <button class="approve" (click)="updateStatus(booking._id, 'READY_FOR_DELIVERY')">
+              Mark Ready for Delivery
+            </button>
+          </div>
+
+          <div class="actions" *ngIf="booking.status === 'READY_FOR_DELIVERY'">
+            <button class="approve" (click)="updateStatus(booking._id, 'DELIVERED')">
+              Mark Delivered
+            </button>
+          </div>
+
+          <div class="actions" *ngIf="booking.status === 'DELIVERED'">
+            <button class="approve" (click)="updateStatus(booking._id, 'PAYMENT_CONFIRMED')">
+              Confirm Payment
+            </button>
+          </div>
+
+          <div class="actions" *ngIf="booking.status === 'PAYMENT_CONFIRMED'">
+            <button class="approve" (click)="updateStatus(booking._id, 'CLOSED')">
+              Close Booking
+            </button>
+          </div>
+
           <div class="actions" *ngIf="booking.status === 'RESOLVED'">
             <button class="approve" (click)="updateStatus(booking._id, 'COMPLETED')">
               Mark Completed
