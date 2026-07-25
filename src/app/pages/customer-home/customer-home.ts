@@ -33,6 +33,7 @@ export class CustomerHome implements OnInit {
   reviewTextMap: { [bookingId: string]: string } = {};
   submittedReviewIds: string[] = [];
   loadingReviews = false;
+  otpMap: { [bookingId: string]: string } = {};
 
   constructor(
     private auth: Auth,
@@ -61,7 +62,10 @@ export class CustomerHome implements OnInit {
     this.socketService.connect();
     this.loadBookings();
 
-    this.socketService.bookingStatusUpdated$.subscribe(() => {
+    this.socketService.bookingStatusUpdated$.subscribe((update: any) => {
+      if (update?.otp && update?.bookingId) {
+        this.otpMap[update.bookingId] = update.otp;
+      }
       this.loadBookings();
     });
 

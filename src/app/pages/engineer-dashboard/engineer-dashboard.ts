@@ -5,9 +5,11 @@ import { Auth } from '../../services/auth';
 import { BookingItem, BookingService } from '../../services/booking';
 import { SocketService } from '../../services/socket';
 import { EngineerService } from '../../services/engineer';
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-engineer-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './engineer-dashboard.html',
   styleUrl: './engineer-dashboard.scss'
 })
@@ -92,13 +94,46 @@ export class EngineerDashboard implements OnInit {
     });
   }
 
-  updateStatus(id: string, status: 'ENGINEER_ENROUTE' | 'ARRIVED' | 'COMPLETED') {
+    updateStatus(id: string, status: string) {
     this.bookingService.updateBookingStatus(id, status).subscribe({
       next: () => {
         this.loadBookings();
       },
       error: (err) => {
         alert(err.error?.message || 'Failed to update booking status');
+      }
+    });
+  }
+
+    otpInputMap: { [bookingId: string]: string } = {};
+  sparePartsMap: { [bookingId: string]: number } = {};
+
+  verifyOtp(bookingId: string) {
+    const otp = this.otpInputMap[bookingId];
+    if (!otp || otp.length !== 4) {
+      alert('Please enter the 4-digit OTP shared by the customer');
+      return;
+    }
+
+    this.bookingService.verifyOtp(bookingId, otp).subscribe({
+      next: () => {
+        this.loadBookings();
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Failed to verify OTP');
+      }
+    });
+  }
+
+  submitDiagnosis(bookingId: string, outcome: 'RESOLVED' | 'PENDING_PARTS') {
+    const spareParts = this.sparePartsMap[bookingId];
+
+    this.bookingService.submitDiagnosis(bookingId, outcome, spareParts).subscribe({
+      next: () => {
+        this.loadBookings();
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Failed to submit diagnosis');
       }
     });
   }

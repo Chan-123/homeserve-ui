@@ -72,11 +72,12 @@ export class BookingService {
 
   updateBookingStatus(
   id: string,
-  status: 'ENGINEER_ENROUTE' | 'ARRIVED' | 'COMPLETED'
+  status: string,
+  amount?: { base?: number; gst?: number; spareParts?: number; total?: number }
 ): Observable<any> {
     return this.http.put(
       `${this.baseUrl}/${id}/status`,
-      { status },
+      { status, amount },
       { headers: this.getHeaders() }
     );
   }
@@ -85,6 +86,22 @@ export class BookingService {
     return this.http.patch<{ message: string; booking: BookingItem }>(
       `${this.baseUrl}/${id}/cancel`,
       {},
+      { headers: this.getHeaders() }
+    );
+  }
+
+  verifyOtp(bookingId: string, otp: string): Observable<any> {
+    return this.http.put<any>(
+      `${this.baseUrl}/${bookingId}/verify-otp`,
+      { otp },
+      { headers: this.getHeaders() }
+    );
+  }
+
+  submitDiagnosis(bookingId: string, outcome: string, spareParts?: number): Observable<any> {
+    return this.http.put<any>(
+      `${this.baseUrl}/${bookingId}/diagnose`,
+      { outcome, spareParts },
       { headers: this.getHeaders() }
     );
   }

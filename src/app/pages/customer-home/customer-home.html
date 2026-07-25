@@ -66,6 +66,15 @@
     <p><strong>Model:</strong> {{ booking.model || '-' }}</p>
     <p><strong>Created:</strong> {{ booking.createdAt | date:'medium' }}</p>
 
+    <p><strong>Created:</strong> {{ booking.createdAt | date:'medium' }}</p>
+
+    <div class="otp-display" *ngIf="booking.status === 'ENGINEER_ENROUTE' && otpMap[booking._id]">
+      <p><strong>Share this OTP with your engineer on arrival:</strong></p>
+      <div class="otp-code">{{ otpMap[booking._id] }}</div>
+    </div>
+
+    <div class="booking-actions">
+
     <div class="booking-actions">
       <button
         class="secondary"
@@ -76,7 +85,7 @@
 
       <button
         class="secondary danger"
-        *ngIf="booking.status === 'REQUESTED'"
+        *ngIf="booking.status === 'REQUESTED' || booking.status === 'ACCEPTED'"
         (click)="cancelBooking(booking._id)">
         Cancel Booking
       </button>

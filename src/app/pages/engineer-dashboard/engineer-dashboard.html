@@ -80,7 +80,42 @@
             </button>
           </div>
 
-          <div class="actions" *ngIf="booking.status === 'ARRIVED'">
+          <div class="actions otp-block" *ngIf="booking.status === 'ARRIVED'">
+            <label>Enter Customer OTP</label>
+            <input
+              type="text"
+              maxlength="4"
+              [(ngModel)]="otpInputMap[booking._id]"
+              placeholder="4-digit OTP"
+            />
+            <button class="approve" (click)="verifyOtp(booking._id)">
+              Verify OTP
+            </button>
+          </div>
+
+          <div class="actions" *ngIf="booking.status === 'OTP_VERIFIED'">
+            <button class="approve" (click)="updateStatus(booking._id, 'DIAGNOSED')">
+              Start Diagnosis
+            </button>
+          </div>
+
+          <div class="actions diagnosis-block" *ngIf="booking.status === 'DIAGNOSED'">
+            <button class="approve" (click)="submitDiagnosis(booking._id, 'RESOLVED')">
+              Issue Resolved
+            </button>
+            <div class="spare-parts-row">
+              <input
+                type="number"
+                placeholder="Spare parts cost (optional)"
+                [(ngModel)]="sparePartsMap[booking._id]"
+              />
+              <button class="reject" (click)="submitDiagnosis(booking._id, 'PENDING_PARTS')">
+                Needs Spare Parts
+              </button>
+            </div>
+          </div>
+
+          <div class="actions" *ngIf="booking.status === 'RESOLVED'">
             <button class="approve" (click)="updateStatus(booking._id, 'COMPLETED')">
               Mark Completed
             </button>
